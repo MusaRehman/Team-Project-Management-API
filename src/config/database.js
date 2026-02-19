@@ -1,8 +1,9 @@
 import { Sequelize } from "sequelize";
-import env from "dotenv";
-env.config();
+import dotenv from "dotenv";
 
-const sequilize = new Sequelize(
+dotenv.config();
+
+export const sequelize = new Sequelize(
   process.env.DB_NAME,
   process.env.DB_USER,
   process.env.DB_PASSWORD,
@@ -11,16 +12,15 @@ const sequilize = new Sequelize(
     port: process.env.DB_PORT,
     dialect: "postgres",
     logging: false,
-  },
+  }
 );
 
-export const connectDB = async () =>{
-
-    try {
-        await sequilize.authenticate();
-        console.log("Database connected successfully");
-        
-    } catch (error) {
-        console.error("Unable to connect to the database:", error);
-    }
-}
+export const connectDB = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log("Database connected successfully");
+  } catch (error) {
+    console.error("Unable to connect to the database:", error);
+    process.exit(1);
+  }
+};
