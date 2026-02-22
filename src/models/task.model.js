@@ -11,6 +11,11 @@ export default (sequelize) => {
       },
       title: { type: DataTypes.STRING, allowNull: false },
       completed: { type: DataTypes.BOOLEAN, defaultValue: false },
+      comment: { type: DataTypes.TEXT },
+      org_id: {
+        type: DataTypes.UUID,
+        allowNull: true,
+      },
     },
     {
       tableName: "tasks",

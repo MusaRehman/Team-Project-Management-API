@@ -18,20 +18,32 @@ export default (sequelize) => {
         unique: true,
         allowNull: false,
       },
-      password_hash: {
+      password: {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      refresh_token: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       role: {
-        type: DataTypes.ENUM("ADMIN", "USER"),
+        type: DataTypes.ENUM("ADMIN", "EMPLOYEE", "USER"),
         defaultValue: "USER",
       },
+      org_id: {
+        type: DataTypes.UUID,
+        allowNull: true,
+      },
+      org_invitation:{
+        type: DataTypes.ENUM("PENDING", "ACCEPTED", "REJECTED"),
+        defaultValue: "PENDING",
+      }
     },
     {
       tableName: "users",
       timestamps: true,
       underscored: true,
-    }
+    },
   );
 
   return User;

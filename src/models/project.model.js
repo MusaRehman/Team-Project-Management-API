@@ -11,6 +11,10 @@ export default (sequelize) => {
       },
       title: { type: DataTypes.STRING, allowNull: false },
       description: { type: DataTypes.TEXT },
+      org_id: {
+        type: DataTypes.UUID,
+        allowNull: true,
+      },
     },
     {
       tableName: "projects",
