@@ -2,17 +2,58 @@ import { sequelize } from "../config/database.js";
 import createUser from "./user.model.js";
 import createProject from "./project.model.js";
 import createTask from "./task.model.js";
+import createOrgination from "./orginazation.js";
 
 const User = createUser(sequelize);
 const Project = createProject(sequelize);
 const Task = createTask(sequelize);
-
+const Orgination = createOrgination(sequelize);
 // Define relationships
-User.hasMany(Project, { foreignKey: "user_id" });
-Project.belongsTo(User, { foreignKey: "user_id" });
 
-Project.hasMany(Task, { foreignKey: "project_id" });
-Task.belongsTo(Project, { foreignKey: "project_id" });
+Orgination.hasMany(Project, {
+  foreignKey: {
+    name: "org_id",
+    allowNull: false,
+  },
+});
+Project.belongsTo(Orgination, {
+  foreignKey: {
+    name: "org_id",
+    allowNull: false,
+  },
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+
+Project.hasMany(Task, {
+  foreignKey: {
+    name: "project_id",
+    allowNull: false,
+  },
+});
+Task.belongsTo(Project, {
+  foreignKey: {
+    name: "project_id",
+    allowNull: false,
+  },
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+
+User.hasMany(Task, {
+  foreignKey: {
+    name: "user_id",
+    allowNull: false,
+  },
+});
+Task.belongsTo(User, {
+  foreignKey: {
+    name: "user_id",
+    allowNull: true,
+  },
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
 
 // Export everything
 export const db = {
@@ -20,4 +61,5 @@ export const db = {
   User,
   Project,
   Task,
+  Orgination,
 };

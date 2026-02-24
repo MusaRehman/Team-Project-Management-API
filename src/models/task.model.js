@@ -12,6 +12,14 @@ export default (sequelize) => {
       title: { type: DataTypes.STRING, allowNull: false },
       completed: { type: DataTypes.BOOLEAN, defaultValue: false },
       comment: { type: DataTypes.TEXT },
+      project_id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+      },
+      user_id:{
+        type: DataTypes.UUID,
+        allowNull: true,
+      },
       org_id: {
         type: DataTypes.UUID,
         allowNull: true,
