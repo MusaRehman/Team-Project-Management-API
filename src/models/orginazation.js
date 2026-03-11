@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize";
 
 export default (sequelize) => {
   return sequelize.define(
-    "Orgination",
+    "Organization",
     {
       id: {
         type: DataTypes.UUID,
@@ -13,7 +13,7 @@ export default (sequelize) => {
       description: { type: DataTypes.TEXT },
     },
     {
-      tableName: "orginations",
+      tableName: "organizations",
       timestamps: true,
       underscored: true,
     },

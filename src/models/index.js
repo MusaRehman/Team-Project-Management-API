@@ -1,22 +1,24 @@
 import { sequelize } from "../config/database.js";
+import createOrganization from "./orginazation.js";
 import createUser from "./user.model.js";
 import createProject from "./project.model.js";
 import createTask from "./task.model.js";
-import createOrgination from "./orginazation.js";
+import createProjectMember from "./projectmember.js";
 
 const User = createUser(sequelize);
 const Project = createProject(sequelize);
 const Task = createTask(sequelize);
-const Orgination = createOrgination(sequelize);
+const Organization = createOrganization(sequelize);
+const ProjectMember = createProjectMember(sequelize);
 // Define relationships
 
-Orgination.hasMany(Project, {
+Organization.hasMany(Project, {
   foreignKey: {
     name: "org_id",
     allowNull: false,
   },
 });
-Project.belongsTo(Orgination, {
+Project.belongsTo(Organization, {
   foreignKey: {
     name: "org_id",
     allowNull: false,
@@ -31,6 +33,7 @@ Project.hasMany(Task, {
     allowNull: false,
   },
 });
+
 Task.belongsTo(Project, {
   foreignKey: {
     name: "project_id",
@@ -55,11 +58,21 @@ Task.belongsTo(User, {
   onUpdate: "CASCADE",
 });
 
+User.belongsToMany(Project, {
+  through: ProjectMember,
+  foreignKey: "user_id",
+});
+
+Project.belongsToMany(User, {
+  through: ProjectMember,
+  foreignKey: "project_id",
+});
+
 // Export everything
 export const db = {
   sequelize,
   User,
   Project,
   Task,
-  Orgination,
+  Organization,
 };

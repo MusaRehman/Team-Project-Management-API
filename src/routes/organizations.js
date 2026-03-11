@@ -1,9 +1,14 @@
 import { Router } from "express";
-import {  } from "../controllers/users.js";
+import {
+  createOrganization,
+  getOrganizationById,
+  getOrganizations,
+} from "../controllers/organization.js";
 
 let router = Router();
 
-router.post('/create', );
-
+router.post("/create", createOrganization);
+router.get("/", getOrganizations);
+router.get("/:id", getOrganizationById);
 
 export default router;

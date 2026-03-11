@@ -13,7 +13,11 @@ export default (sequelize) => {
       description: { type: DataTypes.TEXT },
       org_id: {
         type: DataTypes.UUID,
-        allowNull: true,
+        allowNull: false,
+        references: {
+          model: "organizations",
+          key: "id",
+        },
       },
     },
     {

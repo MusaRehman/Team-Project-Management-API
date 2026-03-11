@@ -1,4 +1,4 @@
-import { parse } from "dotenv";
+
 import { db } from "../models/index.js";
 import bcrypt from "bcrypt";
 

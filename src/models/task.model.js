@@ -23,6 +23,10 @@ export default (sequelize) => {
       org_id: {
         type: DataTypes.UUID,
         allowNull: true,
+        references: {
+          model: "organizations",
+          key: "id",
+        },
       },
     },
     {
