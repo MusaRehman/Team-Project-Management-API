@@ -11,4 +11,5 @@ router.post("/create", createOrganization);
 router.get("/", getOrganizations);
 router.get("/:id", getOrganizationById);
 
+
 export default router;
