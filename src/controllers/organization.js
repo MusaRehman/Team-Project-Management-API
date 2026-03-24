@@ -1,6 +1,5 @@
-
 import { db } from "../models/index.js";
-const { Organization,OrganizationMember } = db;
+const { Organization, OrganizationMember, User } = db;
 // create orginization
 
 export const createOrganization = async (req, res) => {
@@ -18,6 +17,12 @@ export const createOrganization = async (req, res) => {
     const creator = await User.findByPk(creator_id);
     if (!creator) {
       return res.status(404).json({ error: "Creator user not found" });
+    }
+    const cr = creator.get({ plain: true });
+    if (cr.role !== "ADMIN" && cr.role !== "admin") {
+      return res
+        .status(403)
+        .json({ error: "Only admin users can create organizations" });
     }
 
     const organization = await Organization.create({
@@ -40,12 +45,32 @@ export const createOrganization = async (req, res) => {
 };
 
 // get all orginization
+
 export const getOrganizations = async (req, res) => {
   try {
-    const organizations = await Organization.findAll();
-    res.status(200).json(organizations);
+    const cacheKey = "org:list:all";
+
+    // 1. check redis
+    const cached = await getCache(cacheKey);
+    if (cached) {
+      console.log("✅ CACHE HIT");
+      return res.json(cached);
+    }
+
+    // 2. miss → hit DB
+    console.log("❌ CACHE MISS → hitting DB");
+    const orgs = await Organization.findAll({
+      include: [
+        { model: User, as: "members", attributes: ["id", "name", "email"] },
+      ],
+    });
+
+    // 3. store in redis
+    await setCache(cacheKey, orgs, 60);
+
+    res.json(orgs);
   } catch (error) {
-    console.error("Error fetching organizations:", error);
+    console.error(error);
     res.status(500).json({ error: "Failed to fetch organizations" });
   }
 };
@@ -65,5 +90,4 @@ export const getOrganizationById = async (req, res) => {
   }
 };
 
-
-// export  
+// export
