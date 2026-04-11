@@ -1,5 +1,8 @@
+import { set } from "zod";
 import { db } from "../models/index.js";
+import { getCache, setCache } from "../utils/cache.js";
 const { Organization, OrganizationMember, User } = db;
+
 // create orginization
 
 export const createOrganization = async (req, res) => {
@@ -59,11 +62,7 @@ export const getOrganizations = async (req, res) => {
 
     // 2. miss → hit DB
     console.log("❌ CACHE MISS → hitting DB");
-    const orgs = await Organization.findAll({
-      include: [
-        { model: User, as: "members", attributes: ["id", "name", "email"] },
-      ],
-    });
+    const orgs = await Organization.findAll();
 
     // 3. store in redis
     await setCache(cacheKey, orgs, 60);
@@ -78,12 +77,21 @@ export const getOrganizations = async (req, res) => {
 // get orginization by id
 export const getOrganizationById = async (req, res) => {
   try {
+    let cacheKey = `org:yamaloko:${req.params.id}`;
+    // redis check
+    const cachePresent = await getCache(cacheKey);
+    if (cachePresent) {
+      console.log("✅ CACHE HIT");
+      return res.json(cachePresent);
+    }
+    console.log("❌ CACHE MISS → hitting DB");
     const { id } = req.params;
     const organization = await Organization.findByPk(id);
     if (!organization) {
       return res.status(404).json({ error: "Organization not found" });
     }
     res.status(200).json(organization);
+    await setCache(cacheKey, organization, 60); // cache for 60 seconds
   } catch (error) {
     console.error("Error fetching organization:", error);
     res.status(500).json({ error: "Failed to fetch organization" });
