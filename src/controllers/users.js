@@ -2,7 +2,7 @@
 import { db } from "../models/index.js";
 import bcrypt from "bcrypt";
 
-const { User } = db;
+const { User,ProjectMember } = db;
 
 export const createUser = async (req, res) => {
   try {
@@ -130,3 +130,21 @@ export const deleteUser = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const addMemberToOrg = async (req, res) => {
+  try {
+    const { user_id, org_id, role,project_id } = req.body;
+
+    const memberAdded = await ProjectMember.create({
+      user_id,
+      org_id,
+      project_id,
+      role,
+    });
+    return res.status(200).json({ message: "Member added to organization successfully" });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+}

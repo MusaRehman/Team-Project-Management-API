@@ -1,7 +1,7 @@
 import { set } from "zod";
 import { db } from "../models/index.js";
 import { getCache, setCache } from "../utils/cache.js";
-const { Organization, OrganizationMember, User } = db;
+const { Organization, OrganizationMember, User, Project } = db;
 
 // create orginization
 
@@ -98,4 +98,33 @@ export const getOrganizationById = async (req, res) => {
   }
 };
 
-// export
+export const getOrganizationMembers = async (req, res) => {
+  try {
+    const { id } = req.params;
+    // full -> orgs and members and projects
+    const cacheKey = `org:${id}:fullObjecatw`;
+    const cacheMem = await getCache(cacheKey);
+    if (cacheMem) {
+      console.log("✅ CACHE HIT mem");
+      return res.json(cacheMem);
+    }
+    // what if we want projects also seprate key or not ?
+    console.log("❌ CACHE MISS → hitting DB mem");
+    const org = await Organization.findByPk(id, {
+      include: [
+        {
+          model: OrganizationMember,
+        },
+        {
+          model: Project,
+        },
+      ],
+    });
+
+    await setCache(cacheKey, org, 600);
+    res.json(org);
+  } catch (error) {
+    console.error("Error fetching organization members:", error);
+    res.status(500).json({ error: "Failed to fetch organization members" });
+  }
+};

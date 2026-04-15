@@ -28,6 +28,8 @@ export default (sequelize) => {
           model: "users",
           key: "id",
         },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       },
       project_id: {
         type: DataTypes.UUID,
@@ -36,6 +38,18 @@ export default (sequelize) => {
           model: "projects",
           key: "id",
         },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      },
+      org_id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        references: {
+          model: "organizations",
+          key: "id",
+        },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       },
       role: {
         type: DataTypes.ENUM("creator", "editor", "viewer"),
@@ -46,6 +60,12 @@ export default (sequelize) => {
       tableName: "project_members",
       timestamps: true,
       underscored: true,
-    },
+      indexes: [
+        {
+          unique: true,
+          fields: ["user_id", "project_id"],
+        },
+      ],
+    }
   );
 };

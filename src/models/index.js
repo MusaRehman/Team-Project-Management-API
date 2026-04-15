@@ -80,7 +80,20 @@ Organization.belongsToMany(User, {
   foreignKey: "org_id",
   otherKey: "user_id",
 });
+Organization.hasMany(OrganizationMember, {
+  foreignKey: "org_id"
+});
 
+OrganizationMember.belongsTo(Organization, {
+  foreignKey: "org_id"
+});
+Organization.hasMany(Project, {
+  foreignKey: "org_id"
+});
+
+Project.belongsTo(Organization, {
+  foreignKey: "org_id"
+});
 // ─── Export ───────────────────────────────────────────────────
 export const db = {
   sequelize,
